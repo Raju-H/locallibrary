@@ -19,9 +19,9 @@ class Genre(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.ForeignKey("Author", on_delete=models.SET_NULL, null=True)
-    language = models.ForeignKey("Language", verbose_name="Language", on_delete=models.CASCADE) # fixed typo and verbose name
+    language = models.ForeignKey("Language", verbose_name="Language", on_delete=models.CASCADE)
     summary = models.TextField(max_length=1000, help_text='Enter a brief description of the book')
-    isbn = models.CharField('ISBN', max_length=13, help_text='13 Character ISBN number (https://www.isbn-international.org/content/what-isbn)') # removed HTML link
+    isbn = models.CharField('ISBN', max_length=13, help_text='13 Character ISBN number (https://www.isbn-international.org/content/what-isbn)')
     genre = models.ManyToManyField(Genre, help_text='Select a genre for this book')
 
     def __str__(self):
@@ -38,7 +38,7 @@ class BookInstance(models.Model):
     book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
-    LOAN_STATUS = [ # changed to list of tuples
+    LOAN_STATUS = [ 
         ('m', 'Maintenance'),
         ('o', 'On loan'),
         ('a', 'Available'),
@@ -58,7 +58,7 @@ class BookInstance(models.Model):
 class Author(models.Model):
     full_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
-    date_of_death = models.DateField('Date of death', null=True, blank=True) # changed verbose name
+    date_of_death = models.DateField('Date of death', null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('author-detail', args=[str(self.id)])
@@ -69,6 +69,6 @@ class Author(models.Model):
 # language model for locallibrary project
 class Language(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, help_text='Unique ID for this particular language')
-    name = models.CharField(max_length=200) # removed redundant help text
+    name = models.CharField(max_length=200)
     def __str__(self):
         return self.name
