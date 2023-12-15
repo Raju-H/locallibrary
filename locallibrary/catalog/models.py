@@ -3,10 +3,17 @@ from uuid import uuid4
 from django.urls import reverse
 
 # Create your models here.
+# common models
+class CommonFields(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, help_text='Unique ID for this particular object')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
 
 # genre model for locallibrary project and use uuid4 as a id
-class Genre(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, help_text='Unique ID for this particular genre')
+class Genre(CommonFields):
     name = models.CharField(max_length=200, help_text='Genre name', unique=True)
 
     def __str__(self):
@@ -16,12 +23,12 @@ class Genre(models.Model):
         return reverse('genre-detail', args=[str(self.id)])
 
 # book Model representing a book (but not a specific copy of a book)
-class Book(models.Model):
+class Book(CommonFields):
     title = models.CharField(max_length=200)
     author = models.ForeignKey("Author", on_delete=models.SET_NULL, null=True)
     language = models.ForeignKey("Language", verbose_name="Language", on_delete=models.CASCADE)
     summary = models.TextField(max_length=1000, help_text='Enter a brief description of the book')
-    isbn = models.CharField('ISBN', max_length=13, help_text='13 Character ISBN number (https://www.isbn-international.org/content/what-isbn)')
+    isbn = models.CharField('ISBN', max_length=13, help_text='<a href="(https://www.isbn-international.org/content/what-isbn)">13 Character ISBN number</a>')
     genre = models.ManyToManyField(Genre, help_text='Select a genre for this book')
 
     def __str__(self):
@@ -33,8 +40,7 @@ class Book(models.Model):
 
 # bookinstance Model representing a specific copy of a book (i.e. that can be borrowed from the library)
 
-class BookInstance(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, help_text='Unique ID for this particular book across whole library')
+class BookInstance(CommonFields):
     book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
@@ -55,7 +61,7 @@ class BookInstance(models.Model):
     
 # Author Model representing a book author
 
-class Author(models.Model):
+class Author(CommonFields):
     full_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
     date_of_death = models.DateField('Date of death', null=True, blank=True)
@@ -67,8 +73,7 @@ class Author(models.Model):
         return f'{self.full_name}'
 
 # language model for locallibrary project
-class Language(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, help_text='Unique ID for this particular language')
+class Language(CommonFields):
     name = models.CharField(max_length=200)
     def __str__(self):
         return self.name
