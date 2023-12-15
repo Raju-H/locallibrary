@@ -5,7 +5,7 @@ from django.urls import reverse
 # Create your models here.
 # common models
 class CommonFields(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, help_text='Unique ID for this particular object')
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -37,6 +37,10 @@ class Book(CommonFields):
 
     def get_absolute_url(self):
         return reverse('book-detail', args=[str(self.id)])
+    # Create a string for the Genre. This is required to display genre in Admin.
+    def display_genre(self):
+        return ', '.join([genre.name for genre in self.genre.all()[:3]])
+    display_genre.short_description = 'Genre'
 
 # bookinstance Model representing a specific copy of a book (i.e. that can be borrowed from the library)
 
