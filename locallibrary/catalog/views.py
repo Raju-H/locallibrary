@@ -15,4 +15,4 @@ def index(request):
         'number_of_instances_available': number_of_instances_available,
         'number_of_authors': number_of_authors,
     }
-    return render(request, 'index.html', context=context)
+    return render(request, 'catalog/index.html', context=context)
